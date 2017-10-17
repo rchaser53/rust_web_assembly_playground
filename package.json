@@ -1,0 +1,23 @@
+{
+  "name": "rust_web_assembly_playground",
+  "version": "1.0.0",
+  "description": "Don't forget rustup target add wasm32-unknown-emscripten",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rchaser53/rust_web_assembly_playground.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rchaser53/rust_web_assembly_playground/issues"
+  },
+  "homepage": "https://github.com/rchaser53/rust_web_assembly_playground#readme",
+  "devDependencies": {
+    "express": "^4.16.2"
+  }
+}

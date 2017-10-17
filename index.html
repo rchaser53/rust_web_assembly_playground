@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+  <script>
+    fetch('http://localhost:3000/deps/wasm-c248ad4761e2828f.wasm')
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        let Module = {};
+        Module.wasmBinary = buffer
+        var script = document.createElement('script')
+        script.src = "http://localhost:3000/deps/wasm-c248ad4761e2828f.js"
+        document.body.appendChild(script)
+      })
+
+  </script>
+</head>
+<body>
+</body>
+</html>
