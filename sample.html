@@ -2,99 +2,36 @@
 <html>
 <head></head>
 <body>
+  <canvas id="nyan"></canvas>
   <script>
-    function fetchAndInstantiate(url, importObject) {
-      return fetch(url).then(response =>
-        response.arrayBuffer()
-      ).then(bytes =>
-        WebAssembly.instantiate(bytes, importObject)
-      ).then(results =>
-        results.instance
-      );
-    }
-
-    function instantiateCachedURL(dbVersion, url, importObject) {
-      const dbName = 'wasm-cache';
-      const storeName = 'wasm-cache';
-
-      function openDatabase() {
-        return new Promise((resolve, reject) => {
-          var request = indexedDB.open(dbName, dbVersion);
-          request.onerror = reject.bind(null, 'Error opening wasm cache database');
-          request.onsuccess = () => { resolve(request.result) };
-          request.onupgradeneeded = event => {
-            var db = request.result;
-            if (db.objectStoreNames.contains(storeName)) {
-                console.log(`Clearing out version ${event.oldVersion} wasm cache`);
-                db.deleteObjectStore(storeName);
-            }
-            console.log(`Creating version ${event.newVersion} wasm cache`);
-            db.createObjectStore(storeName)
-          };
-        });
-      }
-
-      function lookupInDatabase(db) {
-        return new Promise((resolve, reject) => {
-          var store = db.transaction([storeName]).objectStore(storeName);
-          var request = store.get(url);
-          request.onerror = reject.bind(null, `Error getting wasm module ${url}`);
-          request.onsuccess = event => {
-            if (request.result)
-              resolve(request.result);
-            else
-              reject(`Module ${url} was not found in wasm cache`);
-          }
-        });
-      }
-
-      function storeInDatabase(db, module) {
-        var store = db.transaction([storeName], 'readwrite').objectStore(storeName);
-        var request = store.put(module, url);
-        request.onerror = err => { console.log(`Failed to store in wasm cache: ${err}`) };
-        request.onsuccess = err => { console.log(`Successfully stored ${url} in wasm cache`) };
-      }
-
-      function fetchAndInstantiate() {
-        return fetch(url).then(response =>
-          response.arrayBuffer()
-        ).then(buffer =>
-          WebAssembly.instantiate(buffer, importObject)
-        )
-      }
-
-      return openDatabase().then(db => {
-        return lookupInDatabase(db).then(module => {
-          console.log(`Found ${url} in wasm cache`);
-          return WebAssembly.instantiate(module, importObject);
-        }, errMsg => {
-          console.log(errMsg);
-          return fetchAndInstantiate().then(results => {
-            storeInDatabase(db, results.module);
-            return results.instance;
-          });
-        })
+    const name = 'wasm-c248ad4761e2828f';
+    var Module = {
+      preRun: [],
+      postRun: [],
+      wasmBinaryFile: `${name}.wasm`,
+      print: text => {
+        console.log(text);
       },
-      errMsg => {
-        console.log(errMsg);
-        return fetchAndInstantiate().then(results =>
-          results.instance
-        );
-      });
-    }
-  </script>
-  <script>
-    var importObject = {
-      imports: {
-        imported_func: function(arg) {
-          console.log(arg);
-        }
-      }
+      printErr: text => {
+        console.error(text);
+      },
+      canvas: document.getElementById('nyan')
     };
 
-    fetchAndInstantiate('simple.wasm', importObject).then(function(instance) {
-      instance.exports.exported_func();
-    });
+    fetch(`${name}.wasm`)
+      .then(resp => resp.arrayBuffer())
+      .then(buffer => {
+        Module.wasmBinary = buffer;
+        const script = document.createElement("script");
+        script.src = `${name}.js`;
+        // script.addEventListener('load', (e) => {
+        //   const main = document.createElement('script');
+        //   main.src = 'main.js';
+        //   document.body.appendChild(main);
+        // });
+        document.body.appendChild(script);
+      })
+
   </script>
 </body>
 </html>
