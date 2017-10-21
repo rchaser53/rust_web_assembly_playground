@@ -11,7 +11,6 @@ pub mod emscripten;
 pub fn main() {
     let ctx = sdl2::init().unwrap();
     let video_ctx = ctx.video().unwrap();
-
     let window  = match video_ctx
         .window("rust_to_js", 640, 480)
         .position_centered()
@@ -20,8 +19,6 @@ pub fn main() {
             Ok(window) => window,
             Err(err)   => panic!("failed to create window: {}", err)
         };
-
-        // .renderer()
 
     let mut renderer = match window
                                 .into_canvas()

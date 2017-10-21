@@ -1,19 +1,32 @@
 <!doctype html>
 <html>
-<head>
+<head></head>
+<body>
+  <canvas id="targetCanvas"></canvas>
   <script>
-    fetch('http://localhost:3000/deps/wasm-c248ad4761e2828f.wasm')
-      .then((response) => response.arrayBuffer())
-      .then((buffer) => {
-        let Module = {};
-        Module.wasmBinary = buffer
-        var script = document.createElement('script')
-        script.src = "http://localhost:3000/deps/wasm-c248ad4761e2828f.js"
-        document.body.appendChild(script)
+    const name = 'wasm-test';
+    var Module = {
+      preRun: [],
+      postRun: [],
+      wasmBinaryFile: `${name}.wasm`,
+      print: text => {
+        console.log(text);
+      },
+      printErr: text => {
+        console.error(text);
+      },
+      canvas: document.getElementById('targetCanvas')
+    };
+
+    fetch(`${name}.wasm`)
+      .then(resp => resp.arrayBuffer())
+      .then(buffer => {
+        Module.wasmBinary = buffer;
+        const script = document.createElement("script");
+        script.src = `${name}.js`;
+        document.body.appendChild(script);
       })
 
   </script>
-</head>
-<body>
 </body>
 </html>

@@ -3,14 +3,9 @@ const express = require('express')
 const app = express()
 const server = require('http').createServer(app)
 
-app.use('/', express.static('target/wasm32-unknown-emscripten/release/deps'));
+app.use('/', express.static('wasm'));
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
-});
-
-app.use('/sample', express.static('sample/'));
-app.get('/sample', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'sample.html'))
 });
 
 server.listen(3000, () => {
